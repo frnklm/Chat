@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:chat/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chat/models/authentication_data.dart';
@@ -28,9 +31,25 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
     //fecha o teclado após a conclusão da tela
     FocusScope.of(context).unfocus();
 
+    //Valida se a imagem foi inserida
+    if (_authenticationData.image == null && _authenticationData.isSingUp()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Foto requerida.'),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+      return;
+    }
+
     if (isValid) {
       widget.onSubmit(_authenticationData);
     }
+  }
+
+  //Método recebe uma imagem como parametro e seta no atributo image da classe authenticationData
+  void _pickingImage(File image) {
+    _authenticationData.image = image;
   }
 
   @override
@@ -43,6 +62,7 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
             key: _formKey,
             child: Column(
               children: <Widget>[
+                if (_authenticationData.isSingUp()) UserAvatar(_pickingImage),
                 if (_authenticationData.isSingUp())
                   TextFormField(
                     decoration: const InputDecoration(

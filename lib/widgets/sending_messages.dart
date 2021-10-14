@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +19,21 @@ class _SendingMessagesState extends State<SendingMessages> {
     FocusScope.of(context).unfocus();
 
     final user = FirebaseAuth.instance.currentUser;
-    final userData =
-        FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+
+    FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+
+    final userData = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
 
     FirebaseFirestore.instance.collection('chat').add({
       'text': _typingMessage,
       'createdAt': Timestamp.now(),
       'userId': user.uid,
       'userName': userData['name'],
+      'userImage': userData['imageUrl']
+
     });
 
     _controller.clear();
@@ -36,25 +41,24 @@ class _SendingMessagesState extends State<SendingMessages> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Row(
+    return Row(
       children: <Widget>[
-        Expanded(
-          child: TextField(
-            controller: _controller,
-            decoration: const InputDecoration(labelText: 'Enviar Messagem...'),
-            onChanged: (value) {
-              setState(() {
-                _typingMessage = value;
-              });
-            },
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.send),
-          onPressed: _typingMessage.trim().isEmpty ? null : _submittingMessage,
-        ),
+    Expanded(
+      child: TextField(
+        controller: _controller,
+        decoration: const InputDecoration(labelText: 'Enviar Messagem...'),
+        onChanged: (value) {
+          setState(() {
+            _typingMessage = value;
+          });
+        },
+      ),
+    ),
+    IconButton(
+      icon: const Icon(Icons.send),
+      onPressed: _typingMessage.trim().isEmpty ? null : _submittingMessage,
+    ),
       ],
-    ));
+    );
   }
 }

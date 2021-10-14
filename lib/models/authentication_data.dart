@@ -1,4 +1,6 @@
 //crair modos de login
+import 'dart:io';
+
 enum AuthMode {
   signIn,
   signUp,
@@ -8,6 +10,7 @@ class AuthenticationData {
   String? name;
   String? email;
   String? password;
+  File? image;
   //o modo de login eh criado dentro da classe recebendo um modo padrão signIn
   AuthMode _mode = AuthMode.signIn;
 

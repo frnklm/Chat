@@ -2,6 +2,7 @@ import 'package:chat/models/authentication_data.dart';
 import 'package:chat/widgets/authentication_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class AuthentictionScreen extends StatefulWidget {
@@ -46,10 +47,22 @@ class _AuthentictionScreenState extends State<AuthentictionScreen> {
           password: authenticationData.password.toString(),
         );
 
+        //Método cria uma referencia(bucket) dentro do storage do firebase em uma pasta user_images e nomeia o arquivo com o id do usuário concatenado com .jpg
+        final refFirebaseStorage = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child(userCredential.user!.uid + '.jpg');
+
+        //Recebe os parametros de refFirebaseStorage e faz o upload para o bucket
+        await refFirebaseStorage.putFile(authenticationData.image!);
+        //recebe a url de download da imagem enviada ao bucket
+        final url = await refFirebaseStorage.getDownloadURL();
+
         //Map para receber o nome e email do usuário cadastrado e persistir no firestore
         final userData = {
           'name': authenticationData.name,
           'email': authenticationData.email,
+          'imageUrl': url,
         };
 
         // função que irá criar no firestore uma coleção e persistir o nome e email do usuário cadastrado

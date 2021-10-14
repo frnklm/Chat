@@ -23,17 +23,16 @@ class ChatScreen extends StatelessWidget {
               items: [
                 DropdownMenuItem(
                   value: 'singout',
-                  child: Container(
-                      child: Row(
+                  child: Row(
                     children: const <Widget>[
-                      Icon(
-                        Icons.exit_to_app,
-                        color: Colors.black,
-                      ),
-                      SizedBox(width: 8),
-                      Text('Sair'),
+                  Icon(
+                    Icons.exit_to_app,
+                    color: Colors.black,
+                  ),
+                  SizedBox(width: 8),
+                  Text('Sair'),
                     ],
-                  )),
+                  ),
                 ),
               ],
               onChanged: (item) {
@@ -46,13 +45,11 @@ class ChatScreen extends StatelessWidget {
         ],
       ),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Container(
-        child: Column(
-          children: const <Widget>[
-            Expanded(child: Messages()),
-            SendingMessages(),
-          ],
-        ),
+      body: Column(
+        children: const <Widget>[
+          Expanded(child: Messages()),
+          SendingMessages(),
+        ],
       ),
     );
   }

@@ -30,7 +30,9 @@ class Messages extends StatelessWidget {
           itemBuilder: (ctx, i) => MessageDialogs(
             chatDocs[i]['text'],
             chatDocs[i]['userId'] == user!.uid,
-            chatDocs[i]['userId'],
+            chatDocs[i]['userName'],
+            chatDocs[i]['userImage'],
+            key: ValueKey(chatDocs[i].id),
           ),
         );
       },
