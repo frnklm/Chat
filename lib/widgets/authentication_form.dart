@@ -1,15 +1,23 @@
-import 'package:chat/models/authentication_data.dart';
 import 'package:flutter/material.dart';
 
+import 'package:chat/models/authentication_data.dart';
+
 class AuthenticationForm extends StatefulWidget {
-  const AuthenticationForm({Key? key}) : super(key: key);
+  // ignore: use_key_in_widget_constructors
+  const AuthenticationForm(
+    this.onSubmit,
+  );
+
+  //Function criada para passar os dados recebidos pelo form para o AuthenticationScreen
+  final void Function(AuthenticationData authenticationData) onSubmit;
 
   @override
   _AuthenticationFormState createState() => _AuthenticationFormState();
 }
 
 class _AuthenticationFormState extends State<AuthenticationForm> {
-  final AuthenticationData _authMode = AuthenticationData();
+  final AuthenticationData _authenticationData = AuthenticationData();
+
   //Necessário para atribuir uma key aos formulários
   final GlobalKey<FormState> _formKey = GlobalKey();
 
@@ -21,7 +29,7 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
     FocusScope.of(context).unfocus();
 
     if (isValid) {
-      print(_authMode);
+      widget.onSubmit(_authenticationData);
     }
   }
 
@@ -35,19 +43,19 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
             key: _formKey,
             child: Column(
               children: <Widget>[
-                if (_authMode.isSingUp())
+                if (_authenticationData.isSingUp())
                   TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'Nome',
                     ),
                     key: const ValueKey('name'),
-                    initialValue: _authMode.name,
-                    //Sempre que o usuário insere um valor ele é recebido pelo value e guardado no _authMode.name
-                    onChanged: (value) => _authMode.name = value,
+                    initialValue: _authenticationData.name,
+                    //Sempre que o usuário insere um valor ele é recebido pelo value e guardado no _authenticationData.name
+                    onChanged: (value) => _authenticationData.name = value,
                     //validator recebe um valor inserido, checa se é igual a null e o valor possui ao menos 3 letras sem contar espaços
                     //caso satisfaça o valor eh validado se não retorna mensagem de erro
                     validator: (value) {
-                      if (value == null || value.trim().length < 3) {
+                      if (value == null || value.trim().length < 2) {
                         return 'Nome Inválido';
                       } else {
                         return null;
@@ -59,8 +67,8 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
                       labelText: 'Email',
                     ),
                     key: const ValueKey('email'),
-                    //Sempre que o usuário insere um valor ele é recebido pelo value e guardado no _authMode.email
-                    onChanged: (value) => _authMode.email = value,
+                    //Sempre que o usuário insere um valor ele é recebido pelo value e guardado no _authenticationData.email
+                    onChanged: (value) => _authenticationData.email = value,
                     validator: (value) {
                       if (value == null || !value.contains('@')) {
                         return 'Inserira um Email válido';
@@ -75,8 +83,8 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
                       labelText: 'Senha',
                     ),
                     key: const ValueKey('password'),
-                    //Sempre que o usuário insere um valor ele é recebido pelo value e guardado no _authMode.password
-                    onChanged: (value) => _authMode.password = value,
+                    //Sempre que o usuário insere um valor ele é recebido pelo value e guardado no _authenticationData.password
+                    onChanged: (value) => _authenticationData.password = value,
                     validator: (value) {
                       if (value == null || value.trim().length < 6) {
                         return 'Informe uma senha com mais de 6 caracteres';
@@ -89,7 +97,8 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
                 ),
                 ElevatedButton(
                   //alterna o modo de login baseado no getter isSingIn
-                  child: Text(_authMode.isSingIn() ? 'ENTRAR' : 'CADASTRAR'),
+                  child: Text(
+                      _authenticationData.isSingIn() ? 'ENTRAR' : 'CADASTRAR'),
                   //chama a função _submitForm
                   onPressed: _submitForm,
                 ),
@@ -97,11 +106,12 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
                   onPressed: () {
                     //Após o usuário clicar em cadastrar o método toggleMode troca o tipo de formulário da tela de login
                     setState(() {
-                      _authMode.toggleMode();
+                      _authenticationData.toggleMode();
                     });
                   },
-                  child: Text(
-                      _authMode.isSingIn() ? 'Criar nova conta' : 'Retornar'),
+                  child: Text(_authenticationData.isSingIn()
+                      ? 'Criar nova conta'
+                      : 'Retornar'),
                 ),
               ],
             )),

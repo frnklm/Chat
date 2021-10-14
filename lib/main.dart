@@ -1,4 +1,6 @@
 import 'package:chat/screens/authentication_screen.dart';
+import 'package:chat/screens/chat_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -14,10 +16,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.blueAccent,
+        scaffoldBackgroundColor: Colors.amber,
         textTheme: const TextTheme(
           bodyText2: TextStyle(color: Colors.white),
         ),
@@ -44,8 +47,21 @@ class MyApp extends StatelessWidget {
             primary: Colors.blueAccent,
           ),
         ),
+        textTheme: const TextTheme(
+          bodyText2: TextStyle(color: Colors.white),
+        ),
       ),
-      home: const AuthentictionScreen(),
+      //StreamBuilder vai receber os dados do firestore. Vai passar pelo builder o usuário, se existir vai pro char se não tela de login
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (ctx, userSnapShot) {
+          if (userSnapShot.hasData) {
+            return const ChatScreen();
+          } else {
+            return const AuthentictionScreen();
+          }
+        },
+      ),
     );
   }
 }
